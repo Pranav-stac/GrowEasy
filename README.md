@@ -424,7 +424,53 @@ GrowEasy/
 
 ## Deployment
 
-### Frontend — Vercel
+### Production — AWS EC2 (deployed)
+
+| Detail | Value |
+|--------|-------|
+| **AWS Account** | `208415083257` (Pranav) |
+| **Region** | `ap-south-1` (Mumbai) |
+| **Instance** | `i-01670b853916b9b7a` (`t3.small`) |
+| **Public IP** | `3.110.30.167` |
+| **Domain** | https://groweasy.praanav.in |
+| **Admin email** | pranav@praanav.in |
+| **Stack** | Nginx + PM2 + Node.js 20 |
+
+**Architecture on EC2:**
+
+```
+Internet → Nginx (:80/:443) → Frontend (Next.js :3001)
+                           → /api/* → Backend (Express :4000)
+```
+
+**Services (PM2):**
+- `groweasy-api` — Express backend
+- `groweasy-web` — Next.js frontend
+
+**SSL:** Let's Encrypt via Certbot (auto-runs after DNS points to EC2)
+
+**Re-deploy from local:**
+```powershell
+$env:GEMINI_API_KEY = "your_key"
+cd deploy
+powershell -ExecutionPolicy Bypass -File .\launch-ec2.ps1
+```
+
+Or SSH into the server and run:
+```bash
+cd /opt/groweasy && git pull && npm run install:all
+# update backend/.env and frontend/.env.local
+cd backend && npm run build && pm2 restart groweasy-api
+cd ../frontend && npm run build && pm2 restart groweasy-web
+```
+
+**SSH key:** `deploy/groweasy-key.pem` (created during launch, gitignored)
+
+---
+
+### Alternative — Vercel + Railway
+
+#### Frontend — Vercel
 
 1. Push code to GitHub
 2. Import project in [Vercel](https://vercel.com) with root directory `frontend/`
@@ -434,7 +480,7 @@ GrowEasy/
    ```
 4. Deploy
 
-### Backend — Railway / Render
+#### Backend — Railway / Render
 
 1. Create new service pointing to `backend/` directory
 2. Set environment variables:
@@ -506,8 +552,10 @@ npm run test:watch --prefix backend
 
 Before emailing **varun@groweasy.ai** (deadline: **12 July 2026**):
 
-- [ ] Deploy frontend (Vercel) and backend (Railway/Render)
-- [ ] Push to a **public GitHub repository**
+- [ ] Deploy frontend (AWS EC2) — **done** at `3.110.30.167`
+- [ ] Add DNS A record `groweasy.praanav.in` → `3.110.30.167`
+- [ ] Verify SSL at https://groweasy.praanav.in
+- [x] Push to public GitHub — https://github.com/Pranav-stac/GrowEasy
 - [ ] Update Live Demo URLs in this README
 - [ ] Test all 4 sample files end-to-end with a real Gemini API key
 - [ ] Email must include:
