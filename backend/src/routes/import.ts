@@ -100,24 +100,28 @@ importRouter.post("/extract/stream", upload.single("file"), async (req: Request,
     }
 
     res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Cache-Control", "no-cache, no-transform");
     res.setHeader("Connection", "keep-alive");
+    res.setHeader("X-Accel-Buffering", "no");
     res.flushHeaders();
 
     const sendEvent = (data: object) => {
       res.write(`data: ${JSON.stringify(data)}\n\n`);
+      const flush = (res as Response & { flush?: () => void }).flush;
+      flush?.();
     };
 
     const aiService = getAiService();
     const { imported, skipped, token_usage } = await aiService.extractRecords(
       rows,
-      (processed, total, tokens) => {
+      (progress) => {
         sendEvent({
           type: "progress",
-          processed,
-          total,
-          message: `Processing ${processed} of ${total} rows...`,
-          token_usage: tokens,
+          processed: progress.processed,
+          total: progress.total,
+          phase: progress.phase,
+          message: progress.message,
+          token_usage: progress.token_usage,
         });
       }
     );

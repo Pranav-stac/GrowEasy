@@ -26,7 +26,12 @@ export function ImportModal({ open, onClose, onImportComplete }: ImportModalProp
   const [preview, setPreview] = useState<CsvPreviewData | null>(null);
   const [result, setResult] = useState<ImportResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [progress, setProgress] = useState({ processed: 0, total: 0 });
+  const [progress, setProgress] = useState({
+    processed: 0,
+    total: 0,
+    message: "Starting import…",
+    phase: "mapping" as "mapping" | "extracting" | "complete",
+  });
   const [tokenUsage, setTokenUsage] = useState<TokenUsage | null>(null);
   const [downloading, setDownloading] = useState(false);
 
@@ -36,7 +41,7 @@ export function ImportModal({ open, onClose, onImportComplete }: ImportModalProp
     setPreview(null);
     setResult(null);
     setError(null);
-    setProgress({ processed: 0, total: 0 });
+    setProgress({ processed: 0, total: 0, message: "Starting import…", phase: "mapping" });
     setTokenUsage(null);
   }, []);
 
@@ -69,11 +74,22 @@ export function ImportModal({ open, onClose, onImportComplete }: ImportModalProp
     setStep("processing");
     setError(null);
     setTokenUsage(null);
+    setProgress({
+      processed: 0,
+      total: preview?.total_rows ?? 0,
+      message: "Uploading file…",
+      phase: "mapping",
+    });
 
     try {
-      const importResult = await extractLeads(file, (processed, total, tokens) => {
-        setProgress({ processed, total });
-        if (tokens) setTokenUsage(tokens);
+      const importResult = await extractLeads(file, (p) => {
+        setProgress({
+          processed: p.processed,
+          total: p.total || preview?.total_rows || 0,
+          message: p.message ?? "Processing…",
+          phase: p.phase ?? "extracting",
+        });
+        if (p.tokens) setTokenUsage(p.tokens);
       });
       setResult(importResult);
       setStep("results");
@@ -191,7 +207,9 @@ export function ImportModal({ open, onClose, onImportComplete }: ImportModalProp
               <ProgressBar
                 processed={progress.processed}
                 total={progress.total || preview?.total_rows || 0}
-                message="Reading sample rows and mapping columns..."
+                message={progress.message}
+                phase={progress.phase}
+                active
               />
               {tokenUsage && <TokenUsageBadge usage={tokenUsage} />}
               <div className="flex justify-center pt-2">

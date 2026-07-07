@@ -23,9 +23,17 @@ export async function downloadTemplate(): Promise<void> {
   URL.revokeObjectURL(url);
 }
 
+export interface ImportProgress {
+  processed: number;
+  total: number;
+  message?: string;
+  phase?: "mapping" | "extracting" | "complete";
+  tokens?: TokenUsage;
+}
+
 export async function extractLeads(
   file: File,
-  onProgress?: (processed: number, total: number, tokens?: TokenUsage) => void
+  onProgress?: (progress: ImportProgress) => void
 ): Promise<ImportResult> {
   const formData = new FormData();
   formData.append("file", file);
@@ -61,7 +69,13 @@ export async function extractLeads(
       const data = JSON.parse(line.slice(6));
 
       if (data.type === "progress" && onProgress) {
-        onProgress(data.processed, data.total, data.token_usage);
+        onProgress({
+          processed: data.processed,
+          total: data.total,
+          message: data.message,
+          phase: data.phase,
+          tokens: data.token_usage,
+        });
       } else if (data.type === "complete") {
         return data.result as ImportResult;
       } else if (data.type === "error") {
