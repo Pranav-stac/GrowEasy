@@ -1,0 +1,6 @@
+id,created_time,full_name,email,phone_number,job_title,company_name,city,region,country,lead_status,platform,form_name,notes
+l_1001,2026-06-29 10:00:00,Rahil Sharma,rahil@test.com,917894561177,Manager,Acme Corp,Mumbai,Maharashtra,India,Interested,facebook,Real Estate Inquiry,Called twice no answer
+l_1002,2026-06-29 10:15:00,Priya Nair,,918765432100,Director,TechFlow,Bangalore,Karnataka,India,New Lead,facebook,Apartment Form,Wants 3BHK in Whitefield
+l_1003,2026-06-29 11:00:00,Abhraneel Dhar,abhraneel@example.com,919988776655,,StartupXYZ,Pune,Maharashtra,India,Follow Up,facebook,,
+l_1004,2026-06-29 12:30:00,Unknown Contact,,,,,,,,,facebook,,
+l_1005,2026-06-29 14:00:00,Sneha Reddy,sneha@test.com; sneha.alt@work.com,919123456789,CEO,Reddy Estates,Hyderabad,Telangana,India,Hot Lead,facebook,Plot Inquiry,Alt email: sneha.alt@work.com. Alt phone: 919876543210

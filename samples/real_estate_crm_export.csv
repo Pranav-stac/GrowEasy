@@ -1,0 +1,5 @@
+Property ID,Enquiry Date,Client Name,Contact Email,Mobile,Alternate Mobile,Builder,Location,State,Country,Assigned To,Stage,Remarks,Possession,Project
+PROP-001,13/05/2026 14:20,Rajesh Kumar,rajesh.k@email.com,9876543210,9988776655,Meridian Group,Whitefield,Karnataka,India,agent1@gmail.com,Good Lead,Client wants site visit next week,Q4 2026,Meridian Tower
+PROP-002,14/05/2026 10:00,Anita Desai,anita@test.com,9123456789,,Eden Developers,Koramangala,Karnataka,India,agent2@gmail.com,No Response,Called 3 times,Ready to move,Eden Park
+PROP-003,15/05/2026 16:30,Vikram Singh,,9111222333,,Varah Builders,Sarjapur Road,Karnataka,India,agent1@gmail.com,Bad Lead,Wrong number,,Varah Swamy
+PROP-004,16/05/2026 09:15,Meera Iyer,meera@corp.com,9444555666,9555666777,Sarjapur Plots,Sarjapur,Karnataka,India,agent3@gmail.com,Sale Done,Token amount received,Immediate,Sarjapur Plots
