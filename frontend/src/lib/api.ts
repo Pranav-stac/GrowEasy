@@ -2,10 +2,16 @@ import * as XLSX from "xlsx";
 import type { CsvPreviewData, ImportResult, TokenUsage } from "@/types/crm";
 import { getFileExtension, isSupportedFile } from "./fileTypes";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+/** Same-origin in browser (nginx proxies /api). Fallback for local dev. */
+function getApiBase(): string {
+  if (typeof window !== "undefined") {
+    return process.env.NEXT_PUBLIC_API_URL || window.location.origin;
+  }
+  return process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+}
 
 export async function downloadTemplate(): Promise<void> {
-  const res = await fetch(`${API_BASE}/api/import/template`);
+  const res = await fetch(`${getApiBase()}/api/import/template`);
   if (!res.ok) throw new Error("Failed to download template");
 
   const blob = await res.blob();
@@ -24,7 +30,7 @@ export async function extractLeads(
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await fetch(`${API_BASE}/api/import/extract/stream`, {
+  const res = await fetch(`${getApiBase()}/api/import/extract/stream`, {
     method: "POST",
     body: formData,
   });
@@ -71,7 +77,7 @@ async function extractLeadsFallback(file: File): Promise<ImportResult> {
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await fetch(`${API_BASE}/api/import/extract`, {
+  const res = await fetch(`${getApiBase()}/api/import/extract`, {
     method: "POST",
     body: formData,
   });
