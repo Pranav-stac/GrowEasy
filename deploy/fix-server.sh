@@ -15,6 +15,11 @@ server {
 
     client_max_body_size 6M;
 
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+
     location /api/import/extract/stream {
         proxy_pass http://127.0.0.1:4000/api/import/extract/stream;
         proxy_http_version 1.1;
@@ -70,6 +75,10 @@ fi
 if [ -f "$APP_DIR/backend/.env" ]; then
   sed -i "s|^CORS_ORIGIN=.*|CORS_ORIGIN=https://${DOMAIN},http://${DOMAIN},http://${PUBLIC_IP},https://${PUBLIC_IP}|" "$APP_DIR/backend/.env"
   pm2 restart groweasy-api || true
+fi
+
+if [ -f "$APP_DIR/frontend/.env.local" ]; then
+  sed -i '/^NEXT_PUBLIC_API_URL=/d' "$APP_DIR/frontend/.env.local" || true
 fi
 
 echo "Done. Ensure DNS A record: ${DOMAIN} -> ${PUBLIC_IP}"

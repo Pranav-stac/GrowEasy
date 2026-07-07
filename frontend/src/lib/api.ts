@@ -2,10 +2,10 @@ import * as XLSX from "xlsx";
 import type { CsvPreviewData, ImportResult, TokenUsage } from "@/types/crm";
 import { getFileExtension, isSupportedFile } from "./fileTypes";
 
-/** Same-origin in browser (nginx proxies /api). Fallback for local dev. */
+/** Browser: same-origin (nginx proxies /api). SSR/build: env or local backend. */
 function getApiBase(): string {
   if (typeof window !== "undefined") {
-    return process.env.NEXT_PUBLIC_API_URL || window.location.origin;
+    return window.location.origin;
   }
   return process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 }
