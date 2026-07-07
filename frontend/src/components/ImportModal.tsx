@@ -53,7 +53,7 @@ export function ImportModal({ open, onClose, onImportComplete }: ImportModalProp
       setPreview(data);
       setStep("preview");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to parse CSV");
+      setError(e instanceof Error ? e.message : "Failed to parse file");
       setFile(null);
     }
   };
@@ -175,9 +175,14 @@ export function ImportModal({ open, onClose, onImportComplete }: ImportModalProp
               </div>
 
               <p className="mb-3 text-sm text-[var(--muted)]">
-                Raw CSV preview — {preview.total_rows} rows, {preview.headers.length} columns. AI mapping runs on confirm.
+                Raw preview — {preview.total_rows} rows, {preview.headers.length} columns. AI mapping runs on confirm.
               </p>
-              <DataTable headers={preview.headers} rows={preview.preview_rows} maxHeight="280px" />
+              <DataTable
+                headers={preview.headers}
+                rows={preview.preview_rows}
+                maxHeight="280px"
+                virtualize={preview.total_rows > 50}
+              />
             </>
           )}
 

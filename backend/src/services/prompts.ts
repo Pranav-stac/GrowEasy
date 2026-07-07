@@ -16,9 +16,22 @@ export const MappingPlanSchema = z.object({
 
 export type MappingPlan = z.infer<typeof MappingPlanSchema>;
 
-export const MAPPING_ANALYSIS_PROMPT = `Read CSV headers + 2 sample rows. Map each column to a CRM field from: ${CRM_FIELDS.join(", ")}. Infer from header names AND cell values. JSON only: {"detected_format":"...","column_mappings":[{"csv_column":"","crm_field":""}],"unmapped_columns":[]}`;
+export const MAPPING_ANALYSIS_PROMPT = `Map CSV columns to GrowEasy CRM fields using headers + 2 sample rows.
+Fields: ${CRM_FIELDS.join(", ")}
+Infer from header names AND cell values. Extra columns → crm_note or unmapped_columns.
+JSON: {"detected_format":"","column_mappings":[{"csv_column":"","crm_field":""}],"unmapped_columns":[]}`;
 
-export const EXTRACTION_SYSTEM_PROMPT = `Apply column map to row arrays. JSON: {records:[{${CRM_FIELDS.join(",")}}]}. crm_status: ${CRM_STATUSES.join("|")}|"". data_source: ${DATA_SOURCES.join("|")}|"". mobile=digits only. country_code=+prefix. missing=""`;
+export const EXTRACTION_SYSTEM_PROMPT = `Apply column map to row arrays. Return JSON {records:[...]}.
+Fields: ${CRM_FIELDS.join(",")}
+Rules:
+- crm_status: ${CRM_STATUSES.join("|")} or ""
+- data_source: ${DATA_SOURCES.join("|")} or ""
+- created_at: must parse with new Date(); prefer YYYY-MM-DD HH:mm:ss
+- country_code: +prefix; mobile_without_country_code: digits only
+- multiple emails: first→email, rest→crm_note
+- multiple phones: first→mobile, rest→crm_note
+- crm_note: remarks, extras; use \\n for line breaks
+- missing fields = ""`;
 
 export function buildMappingAnalysisPrompt(
   headers: string[],

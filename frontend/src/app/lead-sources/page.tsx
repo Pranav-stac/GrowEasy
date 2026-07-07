@@ -22,7 +22,11 @@ const supportedFormats = [
     file: "/samples/real_estate_crm_export.csv",
   },
   {
-    name: "Sales / Marketing CSV",
+    name: "Excel Sample",
+    columns: "full_name, created_time, phone_number, email, company_name",
+    file: "/samples/facebook_leads_export.xlsx",
+  },
+  {
     columns: "contact, lead_date, phone, account, comments, campaign",
     file: "/samples/sales_report.csv",
   },

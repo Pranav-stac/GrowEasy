@@ -9,6 +9,7 @@ import {
 } from "../types/crm.js";
 import { chunkArray, hasContactInfo, normalizeRecord } from "../utils/spreadsheet.js";
 import { normalizePhoneFields } from "../utils/phone.js";
+import { normalizeCrmRecord } from "../utils/crmNormalize.js";
 import {
   buildTokenUsage,
   estimateNaiveBaseline,
@@ -138,7 +139,9 @@ export class AiExtractionService {
 
         for (let i = 0; i < batch.length; i++) {
           const rawRow = batch[i];
-          const extracted = normalizePhoneFields(records[i] ?? emptyCrmRecord());
+          const extracted = normalizeCrmRecord(
+            normalizePhoneFields(records[i] ?? emptyCrmRecord())
+          );
 
           if (hasContactInfo(extracted)) {
             imported.push(extracted);
@@ -260,7 +263,9 @@ export class AiExtractionService {
     }
 
     const records = validated.records.map((r) =>
-      normalizePhoneFields(normalizeRecord(r) as unknown as CrmRecord)
+      normalizeCrmRecord(
+        normalizePhoneFields(normalizeRecord(r) as unknown as CrmRecord)
+      )
     );
 
     return { records, tokens };
